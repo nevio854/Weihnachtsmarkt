@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stundenweiser Terminplaner</title>
+    <style>
+        /* Hier kommt der CSS-Code hin */
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
+        h1 { color: #333; text-align: center; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #007bff; color: white; width: 100px; }
+        input[type="text"] { width: 95%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .appointment-slot { display: flex; flex-direction: column; gap: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Termine Weihnachtsmarkt</h1>
+        
+        
+        <table id="appointment-table">
+            <thead>
+                <tr>
+                    <th>Uhrzeit</th>
+                    <th>Termine</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+        
+        <button onclick="saveAppointments()">Termine speichern (Konsole)</button>
+    </div>
+
+    <script>
+        // Hier kommt der JavaScript-Code hin
+        const startHour = 8; // Startzeit 8:00
+        const endHour = 18;  // Endzeit 18:00 (bis 17:00-18:00)
+        const tableBody = document.querySelector('#appointment-table tbody');
+
+        /**
+         * Generiert die Stundenzeilen in der Tabelle.
+         */
+        function generateSchedule() {
+            for (let h = startHour; h < endHour; h++) {
+                const row = tableBody.insertRow();
+                
+                // Zelle für die Uhrzeit
+                const timeCell = row.insertCell();
+                timeCell.textContent = `${h}:00 - ${h + 1}:00`;
+                
+                // Zelle für die Termine
+                const appointmentCell = row.insertCell();
+                appointmentCell.className = 'appointment-slot';
+                
+                // 3 Eingabefelder pro Stunde
+                for (let i = 1; i <= 3; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = `Termin ${i}`;
+                    // Fügen Sie eine eindeutige ID hinzu
+                    input.id = `appt-${h}-${i}`; 
+                    appointmentCell.appendChild(input);
+                }
+            }
+        }
+
+        /**
+         * Speichert die Termine (Ausgabe in der Konsole)
+         */
+        function saveAppointments() {
+            const appointments = {};
+            
+            for (let h = startHour; h < endHour; h++) {
+                const timeSlot = `${h}:00 - ${h + 1}:00`;
+                const slotAppointments = [];
+                
+                for (let i = 1; i <= 3; i++) {
+                    const input = document.getElementById(`appt-${h}-${i}`);
+                    if (input.value.trim() !== "") {
+                        slotAppointments.push(input.value.trim());
+                    }
+                }
+                
+                if (slotAppointments.length > 0) {
+                    appointments[timeSlot] = slotAppointments;
+                }
+            }
+
+            console.log("Gespeicherte Termine:", appointments);
+            alert("Termine wurden in der Browser-Konsole ausgegeben. (F12 drücken)");
+            
+            // HINWEIS: Für eine *permanente* Speicherung (z.B. auf einem Server) wäre 
+            // eine Backend-Technologie (PHP, Node.js, Python etc.) erforderlich.
+            // Für diesen Prototyp wird nur die Browser-Konsole verwendet.
+        }
+
+        // Tabelle beim Laden der Seite generieren
+        generateSchedule();
+    </script>
+</body>
+</html>
